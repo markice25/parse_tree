@@ -1,0 +1,154 @@
+from rcviz.rcviz import CallGraph, viz
+
+class Stack:
+    def __init__(self):
+        self.items = []  # our underlying data structure
+        
+    def is_empty(self):
+        return self.items == []
+    
+    def push(self, item):
+        self.items.append(item)
+        
+    def pop(self):
+        return self.items.pop()
+    
+    def peek(self):
+        return self.items[-1]  # gets us the top of the stack
+    
+    def size(self):
+        return len(self.items)
+        
+        
+class BinaryTree:
+    def __init__(self, root_obj):
+        self.key = root_obj
+        self.left_child = None
+        self.right_child = None
+        
+    def insert_left(self, new_node):
+        if self.left_child is None:
+            self.left_child = BinaryTree(new_node)
+        else:  # if there is a left child
+            t = BinaryTree(new_node)
+            t.left_child = self.left_child
+            self.left_child = t
+            
+    def insert_right(self, new_node):
+        if self.right_child is None:
+            self.right_child = BinaryTree(new_node)
+        else:  # if there is a right child
+            t = BinaryTree(new_node)
+            t.right_child = self.right_child
+            self.right_child = t      
+            
+    def get_right_child(self):
+        return self.right_child
+    
+    def get_left_child(self):
+        return self.left_child
+    
+    def set_root_val(self, obj):
+        self.key = obj
+        
+    def get_root_val(self):
+        return self.key
+    
+    def __repr__(self):
+        return f"BinaryTree({repr(self.key)})"
+        
+
+class Stack:
+    def __init__(self):
+        self.items = []  # our underlying data structure
+        
+    def is_empty(self):
+        return self.items == []
+    
+    def push(self, item):
+        self.items.append(item)
+        
+    def pop(self):
+        return self.items.pop()
+    
+    def peek(self):
+        return self.items[-1]  # gets us the top of the stack
+    
+    def size(self):
+        return len(self.items)
+        
+        
+class BinaryTree:
+    def __init__(self, root_obj):
+        self.key = root_obj
+        self.left_child = None
+        self.right_child = None
+        
+    def insert_left(self, new_node):
+        if self.left_child is None:
+            self.left_child = BinaryTree(new_node)
+        else:  # if there is a left child
+            t = BinaryTree(new_node)
+            t.left_child = self.left_child
+            self.left_child = t
+            
+    def insert_right(self, new_node):
+        if self.right_child is None:
+            self.right_child = BinaryTree(new_node)
+        else:  # if there is a right child
+            t = BinaryTree(new_node)
+            t.right_child = self.right_child
+            self.right_child = t      
+            
+    def get_right_child(self):
+        return self.right_child
+    
+    def get_left_child(self):
+        return self.left_child
+    
+    def set_root_val(self, obj):
+        self.key = obj
+        
+    def get_root_val(self):
+        return self.key
+    
+    def __repr__(self):
+        return f"BinaryTree({repr(self.key)})"
+        
+
+def build_parse_tree(fpexp):
+    fplist = fpexp.split()
+    p_stack = Stack()
+    e_tree = BinaryTree('')
+    
+    p_stack.push(e_tree)
+    current_tree = e_tree
+    
+    for i in fplist:
+        if i == '(':
+            # Create left child, and descend to it
+            current_tree.insert_left('')
+            p_stack.push(current_tree)
+            current_tree = current_tree.get_left_child()
+        #elif i not in ['+', '-', '*', '/', ')']:
+        elif i.isdigit():
+            # If a non-operator (number) is encountered
+            current_tree.set_root_val(int(i))
+            parent = p_stack.pop()
+            current_tree = parent  # tree ascent to the parent
+        elif i in ["+", "-", "*", "/","and","or"]:
+            # Create right child and descend
+            current_tree.set_root_val(i)
+            current_tree.insert_right('')
+            p_stack.push(current_tree)
+            current_tree = current_tree.get_right_child()
+        elif i =="not":
+            current_tree.set_root_val(i)
+            current_tree.insert_left('')
+            current_tree = current_tree.get_left_child()
+        elif i == ")":
+            current_tree = p_stack.pop()
+        else:
+            raise ValueError("invalid expression given!")
+            
+    return e_tree
